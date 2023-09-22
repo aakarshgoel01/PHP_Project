@@ -1,76 +1,99 @@
+
 <?php
-$insert = false;
+$emailcheck = true;
+$phonecheck = true;
+$name;
+$email;
+$phone ;
+$subject;
+$msg  ;
+
 if(isset($_POST['name'])){
-    // Set connection variables
-    $server = "localhost";
-    $username = "root";
-    $password = "";
+$name = $_POST['name'];
+$email = $_POST['mail'];
+$phone = $_POST['phone'];
+$subject = $_POST['subject'];
+$msg = $_POST['message'];
 
-    // Create a database connection
-    $con = mysqli_connect($server, $username, $password);
+$checkph = preg_match('/^([0-9]{10})$/',$phone);
 
-    // Check for connection success
-    if(!$con){
-        die("connection to this database failed due to" . mysqli_connect_error());
-    }
-    // echo "Success connecting to the db";
+if($checkph == 0){
+    $phonecheck = false;
+}
 
-    // Collect post variables
-    $name = $_POST['name'];
-    $gender = $_POST['gender'];
-    $age = $_POST['age'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
-    $desc = $_POST['desc'];
-    $sql = "INSERT INTO `trip`.`trip` (`name`, `age`, `gender`, `email`, `phone`, `other`, `dt`) VALUES ('$name', '$age', '$gender', '$email', '$phone', '$desc', current_timestamp());";
-    // echo $sql;
+if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+    
+    $emailcheck = false;
+}
 
-    // // Execute the query
-    if($con->query($sql) == true){
-        // echo "Successfully inserted";
 
-    //     // Flag for successful insertion
-        $insert = true;
-    }
-    else{
-        echo "ERROR: $sql <br> $con->error";
-    }
-
-    // // Close the database connection
-    $con->close();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Travel Form</title>
-    <link href="https://fonts.googleapis.com/css?family=Roboto|Sriracha&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+    <style>
+
+*{
+    border-sizing:border-box;
+    margin:0px;
+    padding:0px;
+}
+
+        input{
+            border: 2px solid black;
+            border-radius: 6px;
+            outline: none ;
+            font-size: 16px;
+            width: 80%;
+            margin: 11px 0px;
+            padding:7px;
+        }
+        form{
+            display:flex;
+            align-items: center;
+            justify-content:center;
+            flex-direction:column;
+        }
+
+        .btn{
+            color:white;
+            background:purple;
+            padding:8px 12px;
+            border:1px solid black;
+            border-radius:14px;
+            cursor:pointer;
+        }
+
+    </style>
 </head>
 <body>
-    <img class="bg" src="bg.jpg" alt="IIT Kharagpur">
-    <div class="container">
-        <h1>Welcome to IIT Kharagpur US Trip form</h3>
-        <p>Enter your details and submit this form to confirm your participation in the trip </p>
-        <?php
-        if($insert == true){
-        echo "<p class='submitMsg'>Thanks for submitting your form. We are happy to see you joining us for the US trip</p>";
-        }
-    ?>
-        <form action="index.php" method="post">
-            <input type="text" name="name" id="name" placeholder="Enter your name">
-            <input type="text" name="age" id="age" placeholder="Enter your Age">
-            <input type="text" name="gender" id="gender" placeholder="Enter your gender">
-            <input type="email" name="email" id="email" placeholder="Enter your email">
-            <input type="phone" name="phone" id="phone" placeholder="Enter your phone">
-            <textarea name="desc" id="desc" cols="30" rows="10" placeholder="Enter any other information here"></textarea>
-            <button class="btn">Submit</button> 
-        </form>
-    </div>
-    <script src="index.js"></script>
-    
+
+    <form action="index.php" method="post">
+       <label>Name : </label> <input type="text" name="name" placeholder="Enter your full name. " value="<?php echo $name ?>"> <br>
+       <?php 
+       if($phonecheck == false)
+       {
+         echo "<p>Enter valid Phone Number</p>";
+        }  
+        ?>
+       <label>Phone Number : </label> <input type="text" name="phone" placeholder="Enter your phone number. " value="<?php echo $phone ?>"><br>
+       <?php
+       if($emailcheck == false){
+       echo "Enter valid Email";
+       }
+       ?>
+
+       <label>E-Mail : </label> <input type="text" name="mail" placeholder="Enter your E-mail. " value="<?php echo $email ?>"><br>
+       <label>Subject : </label> <input type="text" name="subject" placeholder="Enter the subject. " value="<?php echo $subject ?>"><br>
+       <label>Message : </label> <input type="text" name="message" placeholder="Enter the message. "  value="<?php echo $msg ?>"><br>
+        <input type="submit" placeholder="submit" class="btn"> 
+    </form>
+
 </body>
 </html>
